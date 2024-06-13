@@ -1,11 +1,58 @@
-<h1 style="font-weight: bold">My 1st Nginx Page - Created by Bash Scripting</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My First Nginx Page</title>
+<!-- Include Google Roboto Font -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif; /* Applying Roboto Font */
+        background-color: #f5f5f5; /* Light grey background */
+        color: #333333; /* Material text color */
+        padding: 20px;
+        margin: 0;
+    }
+
+    h1 {
+        font-weight: 300; /* Lighter font-weight, typical in Material Design */
+        color: #1a237e; /* Material Design indigo hue */
+        text-align: center;
+        padding-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    ol {
+        background: #ffffff; /* White background for contrast */
+        padding: 20px;
+        border-radius: 8px; /* Slight rounding of corners */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+        list-style-position: inside;
+    }
+
+    li {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+<h1>My 1st Nginx Page - Created by Bash Scripting</h1>
 <p>
-	This was created by a local workstation script file which:
+    This was created by a local workstation script file which:
 </p>
 <ol>
-	<li> - SSH'd into the remote machine
-	<li> - Set safety options in the bash environment
-	<li> - Installed Nginx
-	<li> - scp secured copied an already built index.html file into the directory Nginx serves templates from, i.e. /var/www/html/...
-	<li> - rebooted Nginx so that it would serve the index.html file 
+    <li>SSH'd into the remote machine.</li>
+    <li>Set safety options in the bash environment.</li>
+    <li>Installed Nginx.</li>
+    <li>Securely copied an already built index.html file into the directory Nginx serves templates from, i.e., /var/www/html/...</li>
+    <li>Rebooted Nginx so that it would serve the index.html file.</li>
 </ol>
+</body>
+</html>
