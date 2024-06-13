@@ -24,7 +24,8 @@ echo " here's the directory we're in and are copying index from; $DIR"
 if [ -e $DIR/index.html ]
   scp $SCP_ARGS $DIR/index.html $USER@$SERVER:~/index.html && echo "successfully copied ~/index to server"
 else
- echo "This script needs $DIR/index.html to exist, which it currently does not"
+  echo "This script needs $DIR/index.html to exist, which it currently does not"
+  exit 1
 fi
 
 
