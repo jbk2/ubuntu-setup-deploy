@@ -1,31 +1,11 @@
-#!/bin/bash
-
-USER=ubuntu
-SERVER=$SERVER
-PORT=22 # default ssh port
-SSH_KEY=$SSH_KEY
-SSH_OPTIONS="-i $SSH_KEY -o StrictHostKeyChecking=no"
-SSH_ARGS="$USER@$SERVER -p $PORT $SSH_OPTIONS"
-SCP_ARGS="-i $SSH_KEY"
-
-fail() {
-  echo "Failed: $1"
-  exit 1
-}
-
-#Debug output
-echo "Connecting to $USER@$SERVER on port $PORT using SSH key $SSH_KEY"
-
-ssh $SSH_ARGS 'bash -s' <<-STDIN
-# set bash session options to catch errors
+#!/usr/bin/env bash
 set -euo pipefail
 
-# Install nginx
-sudo apt install -y nginx && echo "successfully installed nginx" || fail "failed to install nginx"
-STDIN
-
+SCP_ARGS="-i $SSH_KEY"
 DIR=$(dirname "$(realpath "$0")")
+source $DIR/settings.sh
 echo " here's the directory we're in and are copying index from; $DIR"
+
 if [ -e $DIR/index.html ]
 then
   if scp $SCP_ARGS $DIR/index.html $USER@$SERVER:~/index.html
@@ -38,16 +18,21 @@ else
   fail "This script needs $DIR/index.html to exist, which it currently does not"
 fi
 
-
-ssh $SSH_ARGS 'bash -s' <<-STDIN
-  set -euo pipefail
-
+ssh_as_user <<-STDIN
   # Move the file to the nginx html directory
-  if ! sudo mv ~/index.html /var/www/html/index.html
+  if sudo mv ~/index.html /var/www/html/index.html
   then 
-    fail "failed to move ~/index to /var/www/html/"
-  else
     echo "successfully moved ~/index to /var/www/html/"
+  else
+    fail "failed to move ~/index to /var/www/html/"
+  fi
+
+  # change owner of copied index from local machine owner to ubuntu user
+  if sudo chown ubuntu:ubuntu /var/www/html/index.html
+  then
+    echo "successfully changed ownership of /var/www/html/index.html to ubunut user"
+  else
+    fail "failed to change ownership of /var/www/html/index.html to ubuntu"
   fi
 
   # Restart nginx to apply changes

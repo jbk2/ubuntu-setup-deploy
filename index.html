@@ -43,13 +43,14 @@
 </style>
 </head>
 <body>
-<h1>My 1st Nginx Page - Created by Bash Scripting</h1>
+<h1>My 1st Nginx Page - Created by Bash Scripting - v1.1</h1>
 <p>
     This was created by a local workstation script file which:
 </p>
 <ol>
     <li>SSH'd into the remote machine.</li>
     <li>Set safety options in the bash environment.</li>
+    <li>Created deploy user and copied ssh key to their home.</li>
     <li>Installed Nginx.</li>
     <li>Securely copied an already built index.html file into the directory Nginx serves templates from, i.e., /var/www/html/...</li>
     <li>Rebooted Nginx so that it would serve the index.html file.</li>
