@@ -57,7 +57,11 @@ server {
                 try_files $uri $uri/ =404;
         }
 
-	location /blog {
+	location = /blog {
+          return 301 /blog/;
+        }
+
+	location /blog/ {
 		root /var/www/html;
 	}
 
