@@ -26,17 +26,18 @@ ssh_as_ubuntu <<-STDIN || fail "Adding user & setting up ssh keys"
   sudo chmod 600 /home/$USER/.ssh/authorized_keys && echo "successfully chmod'd /home/$USER/.ssh/authorized_keys" \
     || fail "failed to chmod /home/$USER/.ssh/authorized_keys"
 
-# would be the 'wheel' group on Fedora/CentOS/RHEL.
-  sudo usermod -a -G sudo $USER && echo "added $USER to sudo group" \
+# would be the 'wheel' group on Fedora/CentOS/RHEL, but is 'sudo' group in Debian.
+  sudo usermod -a -G sudo $USER && echo "added $USER to the 'sudo' group" \
     || fail "failed to add $USER to sudo group"
 
   echo "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
-    && echo "successfully added $USER to sudoers" || fail "failed to add $USER to sudoers"
+    && echo "successfully added $USER to /etc/sudoers.d/$USER_user_permissions" \
+    || fail "failed to add $USER to /etc/sudoers.d/$USER_user_permissions"
 
-# passwd -l $USER # don't want to lock 'ubuntu' user, but if this were 'root' user we would want to.
+# passwd -l $USER # don't want to lock 'ubuntu' user, but if this were 'root' user, as it would be on RedHat, we would want to.
 STDIN
 
-# Don't want to lock 'ubuntu' user, but if default user were 'root' user, we would want to lock it.
+# Don't want to lock 'ubuntu' user, but if default user were 'root' user, as it would be on RedHat, we would want to lock it.
 # ssh_as_user <<-STDIN || fail "Disabling root"
 #   chage -E o root
 # STDIN
