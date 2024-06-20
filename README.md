@@ -14,6 +14,12 @@ which will:
 
 ### To run the scripts:
 - clone the repository
+
 - cd into the repository
-- simply run the ./setup.sh script file in terminal
+
+- run the help option on ./setup.sh, i.e. `USER=deploy ./setup.sh -h`
+  - run without arguments to run all units and steps.
+  - you must define USER with the username that you want to run the server
+    set up with, otherwise USER will be set to your local machine's user name.
+
 - then run the ./deploy.sh script file in terminal
