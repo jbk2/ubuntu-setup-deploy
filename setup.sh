@@ -8,6 +8,9 @@ source $DIR/settings.sh
 # ----------------------------------------
 
 SUCCESS="\033[0;32m"  # Green
+SUCCESS_BOLD="\033[1;32m"  # Green
+ALERT="\033[0;34m"    # Blue
+WARNING="\033[0;33m"  # Yellow
 ERROR="\033[0;31m"    # Red
 NC="\033[0m"          # No color
 
@@ -82,15 +85,15 @@ should_run() {
 UNIT=update_upgrade
 STEP=update
 if should_run; then
-ssh_as_ubuntu <<-STDIN || fail "${ERROR}Updating packages${NC}"
-  sudo apt update && echo -e "${SUCCESS}successfully updated packages${NC}" || fail "${ERROR}failed to update packages${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Updating packages${NC}"
+  sudo apt update && echo -e "${SUCCESS}successfully updated packages${NC}" || echo -e "${ERROR}failed to update packages${NC}"
 STDIN
 fi
 
 STEP=upgrade
 if should_run; then
-ssh_as_ubuntu <<-STDIN || fail "${ERROR}Ugrading packages${NC}"
-  sudo apt upgrade -y && echo -e "${SUCCESS}successfully upgraded packages${NC}" || fail "${ERROR}failed to upgrade packages${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Ugrading packages${NC}"
+  sudo apt upgrade -y && echo -e "${SUCCESS}successfully upgraded packages${NC}" || echo -e "${ERROR}failed to upgrade packages${NC}"
 STDIN
 fi
 
@@ -100,56 +103,73 @@ fi
 UNIT=create_user
 STEP=add_user
 if should_run; then
-ssh_as_ubuntu <<-STDIN || fail "${ERROR}Adding $USER${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER${NC}"
   echo -e "${SUCCESS}Attempting to add user $USER...${NC}"
-  sudo useradd -m $USER && echo -e "${SUCCESS}$USER added successfully.${NC}" || fail "${ERROR}Failed to add $USER${NC}"
+  if id "$USER" &>/dev/null; then
+    echo -e "${ALERT}$USER already exists.${NC}"
+  else
+    sudo useradd -m $USER && echo -e "${SUCCESS}$USER added successfully.${NC}" \
+      || echo -e "${ERROR}Failed to add $USER${NC}"
+  fi
 STDIN
 fi
 
 STEP=setup_ssh
 if should_run; then
-ssh_as_ubuntu <<-STDIN || fail "${Error}Setting up $USER's ssh key${NC}"
-  echo -e "${SUCCESS}Setting up SSH environment for $USER...${NC}"
-  sudo -u $USER bash -c 'mkdir ~/.ssh' && echo -e "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
-    || fail "${ERROR}Failed to mmkdir ~/.ssh for $USER${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${Error}Setting up $USER's ssh key${NC}"
+  echo -e "${SUCCESS}Begining the set up of SSH environment for $USER...${NC}"
 
-  sudo -u $USER bash -c 'touch ~/.ssh/authorized_keys' && echo -e "${SUCCESS}made $USER's ~/.ssh/authorized_keys file successfully.${NC}" \
-    || fail "${ERROR}Failed to create ~/.ssh/authorized_keys file for $USER${NC}"
+  # create ~/.ssh
+  if sudo [ -d "/home/$USER/.ssh" ]; then
+    echo -e "${ALERT}/home/$USER/.ssh already exists for $USER${NC}"
+  else
+    sudo -u $USER bash -c 'mkdir ~/.ssh' && echo -e "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
+      || echo -e "${ERROR}Failed to mmkdir ~/.ssh for $USER${NC}"
+  fi
+
+  # create ~/.ssh/authorized_keys
+  if sudo [ -f "/home/$USER/.ssh/authorized_keys" ]; then
+    echo -e "${ALERT}/home/$USER/.ssh/authorized_keys already exists for $USER${NC}"
+  else
+    sudo -u $USER bash -c 'touch ~/.ssh/authorized_keys' && echo -e "${SUCCESS}created $USER's ~/.ssh/authorized_keys file successfully.${NC}" \
+      || echo -e "${ERROR}Failed to create ~/.ssh/authorized_keys file for $USER${NC}"
+  fi
 
   sudo bash -c "cat /home/ubuntu/.ssh/authorized_keys > /home/$USER/.ssh/authorized_keys" \
-   && echo -e "${SUCCESS}saved authorized_key into /home/$USER/.ssh/authorized_keys${NC}" \
-    || fail "${ERROR}Failed to save key into /home/$USER/.ssh/authorized_keys${NC}"
+    && echo -e "${SUCCESS}saved ubuntu user's authorized_keys into /home/$USER/.ssh/authorized_keys${NC}" \
+    || echo -e "${ERROR}Failed to save key into /home/$USER/.ssh/authorized_keys${NC}"
 
   sudo chmod 700 /home/$USER/.ssh && echo -e "${SUCCESS}successfully chmod'd /home/$USER/.ssh${NC}" \
-    || fail "${ERROR}failed to chmod /home/$USER/.ssh${NC}"
+    || echo -e "${ERROR}failed to chmod /home/$USER/.ssh${NC}"
 
   sudo chmod 600 /home/$USER/.ssh/authorized_keys && echo -e "${SUCCESS}successfully chmod'd /home/$USER/.ssh/authorized_keys${NC}" \
-    || fail "${ERROR}failed to chmod /home/$USER/.ssh/authorized_keys${NC}"
+    || echo -e "${ERROR}failed to chmod /home/$USER/.ssh/authorized_keys${NC}"
 STDIN
 fi
 
+
 STEP=add_user_to_sudo
 if should_run; then
-ssh_as_ubuntu <<-STDIN || fail "${ERROR}Adding $USER to sudo group${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER to sudo group${NC}"
 # would be the 'wheel' group on Fedora/CentOS/RHEL, but is 'sudo' group in Debian.
   sudo usermod -a -G sudo $USER && echo -e "${SUCCESS}added $USER to the 'sudo' group${NC}" \
-    || fail "${ERROR}failed to add $USER to sudo group${NC}"
+    || echo -e "${ERROR}failed to add $USER to sudo group${NC}"
 
   echo -e "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
     && echo -e "${SUCCESS}successfully added $USER to /etc/sudoers.d/{$USER}_user_permissions${NC}" \
-    || fail "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
+    || echo -e "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
 
   bash -c "sudo chsh -s /bin/bash ${USER}" && echo -e "${SUCCESS}changed shell to bash for $USER${NC}" \
-    || fail "${ERROR}failed to change shell to bash for $USER${NC}"
+    || echo -e "${ERROR}failed to change shell to bash for $USER${NC}"
 STDIN
 fi
 
 # STEP=lock_root_user
-# ssh_as_ubuntu <<-STDIN || fail "Locking $USER account"
+# ssh_as_ubuntu <<-STDIN || echo -e "Locking $USER account"
 # passwd -l $USER # don't want to lock 'ubuntu' user, but if this were 'root' user, as it would be on RedHat, we would want to.
 
 # Don't want to lock 'ubuntu' user, but if default user were 'root' user, as it would be on RedHat, we would want to lock it.
-# ssh_as_user <<-STDIN || fail "Disabling root"
+# ssh_as_user <<-STDIN || echo -e "Disabling root"
 #   chage -E o root
 # STDIN
 
@@ -158,6 +178,6 @@ fi
 UNIT=install_nginx
 if should_run; then
 ssh_as_user <<-STDIN
-  sudo apt install -y nginx && echo -e "${SUCCESS}successfully installed nginx${NC}" || fail "${ERROR}failed to install nginx${NC}"
+  sudo apt install -y nginx && echo -e "${SUCCESS}successfully installed nginx${NC}" || echo -e "${ERROR}failed to install nginx${NC}"
 STDIN
 fi
