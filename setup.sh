@@ -39,11 +39,11 @@ while getopts ":u:s:vh" opt; do
     v)
       VERBOSE=true;;
     h)
-      echo "$USAGE"
+      echo -e "$USAGE"
       exit 0;;
     \?)
-      echo "$OPTARG is not a valid option."
-      echo "$USAGE"
+      echo -e "$OPTARG is not a valid option."
+      echo -e "$USAGE"
       exit 1;;
   esac
 done
@@ -79,7 +79,7 @@ should_run() {
 
 # ----------------------------------------
 
-UNIT=update-upgrade
+UNIT=update_upgrade
 STEP=update
 if should_run; then
 ssh_as_ubuntu <<-STDIN || fail "${ERROR}Updating packages${NC}"
@@ -97,7 +97,7 @@ fi
 # ----------------------------------------
 
 
-UNIT=create-user
+UNIT=create_user
 STEP=add_user
 if should_run; then
 ssh_as_ubuntu <<-STDIN || fail "${ERROR}Adding $USER${NC}"
@@ -110,20 +110,20 @@ STEP=setup_ssh
 if should_run; then
 ssh_as_ubuntu <<-STDIN || fail "${Error}Setting up $USER's ssh key${NC}"
   echo -e "${SUCCESS}Setting up SSH environment for $USER...${NC}"
-  sudo -u $USER bash -c 'mkdir ~/.ssh' && echo "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
+  sudo -u $USER bash -c 'mkdir ~/.ssh' && echo -e "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
     || fail "${ERROR}Failed to mmkdir ~/.ssh for $USER${NC}"
 
-  sudo -u $USER bash -c 'touch ~/.ssh/authorized_keys' && echo "${SUCCESS}made $USER's ~/.ssh/authorized_keys file successfully.${NC}" \
+  sudo -u $USER bash -c 'touch ~/.ssh/authorized_keys' && echo -e "${SUCCESS}made $USER's ~/.ssh/authorized_keys file successfully.${NC}" \
     || fail "${ERROR}Failed to create ~/.ssh/authorized_keys file for $USER${NC}"
 
   sudo bash -c "cat /home/ubuntu/.ssh/authorized_keys > /home/$USER/.ssh/authorized_keys" \
-   && echo "${SUCCESS}saved authorized_key into /home/$USER/.ssh/authorized_keys${NC}" \
+   && echo -e "${SUCCESS}saved authorized_key into /home/$USER/.ssh/authorized_keys${NC}" \
     || fail "${ERROR}Failed to save key into /home/$USER/.ssh/authorized_keys${NC}"
 
-  sudo chmod 700 /home/$USER/.ssh && echo "${SUCCESS}successfully chmod'd /home/$USER/.ssh${NC}" \
+  sudo chmod 700 /home/$USER/.ssh && echo -e "${SUCCESS}successfully chmod'd /home/$USER/.ssh${NC}" \
     || fail "${ERROR}failed to chmod /home/$USER/.ssh${NC}"
 
-  sudo chmod 600 /home/$USER/.ssh/authorized_keys && echo "${SUCCESS}successfully chmod'd /home/$USER/.ssh/authorized_keys${NC}" \
+  sudo chmod 600 /home/$USER/.ssh/authorized_keys && echo -e "${SUCCESS}successfully chmod'd /home/$USER/.ssh/authorized_keys${NC}" \
     || fail "${ERROR}failed to chmod /home/$USER/.ssh/authorized_keys${NC}"
 STDIN
 fi
@@ -132,12 +132,15 @@ STEP=add_user_to_sudo
 if should_run; then
 ssh_as_ubuntu <<-STDIN || fail "${ERROR}Adding $USER to sudo group${NC}"
 # would be the 'wheel' group on Fedora/CentOS/RHEL, but is 'sudo' group in Debian.
-  sudo usermod -a -G sudo $USER && echo "${SUCCESS}added $USER to the 'sudo' group${NC}" \
+  sudo usermod -a -G sudo $USER && echo -e "${SUCCESS}added $USER to the 'sudo' group${NC}" \
     || fail "${ERROR}failed to add $USER to sudo group${NC}"
 
-  echo "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
-    && echo "${SUCCESS}successfully added $USER to /etc/sudoers.d/$USER_user_permissions${NC}" \
-    || fail "${ERROR}failed to add $USER to /etc/sudoers.d/$USER_user_permissions${NC}"
+  echo -e "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
+    && echo -e "${SUCCESS}successfully added $USER to /etc/sudoers.d/{$USER}_user_permissions${NC}" \
+    || fail "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
+
+  bash -c "sudo chsh -s /bin/bash ${USER}" && echo -e "${SUCCESS}changed shell to bash for $USER${NC}" \
+    || fail "${ERROR}failed to change shell to bash for $USER${NC}"
 STDIN
 fi
 
@@ -152,10 +155,9 @@ fi
 
 #  ----------------------------------------
 
-UNIT=install-nginx
-STEP=install_nginx
+UNIT=install_nginx
 if should_run; then
 ssh_as_user <<-STDIN
-  sudo apt install -y nginx && echo "${SUCCESS}successfully installed nginx${NC}" || fail "${ERROR}failed to install nginx${NC}"
+  sudo apt install -y nginx && echo -e "${SUCCESS}successfully installed nginx${NC}" || fail "${ERROR}failed to install nginx${NC}"
 STDIN
 fi
