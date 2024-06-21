@@ -135,6 +135,7 @@ ssh_as_ubuntu <<-STDIN || echo -e "${Error}Setting up $USER's ssh key${NC}"
       || echo -e "${ERROR}Failed to create ~/.ssh/authorized_keys file for $USER${NC}"
   fi
 
+  # save ubuntu's keys into user's & chmod .ssh & authorized_keys
   sudo bash -c "cat /home/ubuntu/.ssh/authorized_keys > /home/$USER/.ssh/authorized_keys" \
     && echo -e "${SUCCESS}saved ubuntu user's authorized_keys into /home/$USER/.ssh/authorized_keys${NC}" \
     || echo -e "${ERROR}Failed to save key into /home/$USER/.ssh/authorized_keys${NC}"
