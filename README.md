@@ -19,7 +19,10 @@ which will:
 
 - run the help option on ./setup.sh, i.e. `USER=deploy ./setup.sh -h`
   - run without arguments to run all units and steps.
-  - you must define USER with the username that you want to run the server
-    set up with, otherwise USER will be set to your local machine's user name.
+  - you assign USER with the username that you want to run the server
+    set up with, and pass this varible in the command line argument,
+    otherwise USER will be set to your local machine's user name.
 
 - then run the ./deploy.sh script file in terminal
+- you must pass USER in with the execute deploy.sh command
+  (set as the same user that you setup in setup.sh).
