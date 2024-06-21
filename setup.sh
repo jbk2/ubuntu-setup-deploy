@@ -4,11 +4,10 @@ set -euo pipefail
 DIR=`dirname "$(readlink -f "$0")"`
 source $DIR/settings.sh
 
-
 # ----------------------------------------
 
-SUCCESS="\033[0;32m"  # Green
-SUCCESS_BOLD="\033[1;32m"  # Green
+INFO="\033[0;32m"  # Green
+SUCCESS="\033[1;32m"  # Green bold
 ALERT="\033[0;34m"    # Blue
 WARNING="\033[0;33m"  # Yellow
 ERROR="\033[0;31m"    # Red
@@ -17,14 +16,18 @@ NC="\033[0m"          # No color
 # ----------------------------------------
 
 USAGE="
+##################################
 Usage:
   $0
   $0 -u UNIT -s STEP
+
 Options:
-  -u UNIT    run only a given unit
-  -s STEP    run only a given step
+  -u UNIT    run only a given unit ("update_upgrade", "create_user", "install_nginx")
+  -s STEP    run only a given step ("update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
   -v         run in verbose mode
-  -h         show this help message"
+  -h         show this help message
+##################################
+"
 
 # ----------------------------------------
 
@@ -32,24 +35,51 @@ RUN_UNIT=""
 RUN_STEP=""
 VERBOSE=false
 
-# assign variables from command line arguments
+# each UNIT or STEP value must be defined in the corresponding array
+# to enabling correct parsing of command line arguments:
+valid_units=("update_upgrade" "create_user" "install_nginx")
+valid_steps=("update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
+
+function contains_element {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
 while getopts ":u:s:vh" opt; do
   case $opt in
     u)
-      RUN_UNIT=$OPTARG;;
+      if contains_element "$OPTARG" "${valid_units[@]}"; then
+        RUN_UNIT=$OPTARG
+      else
+        echo -e "${ERROR}Invalid unit specified: $OPTARG. Valid units are: ${valid_units[*]}.${NC}"
+        echo -e "$USAGE"
+        exit 1
+      fi
+      ;;
     s)
-      RUN_STEP=$OPTARG;;
+      if contains_element "$OPTARG" "${valid_steps[@]}"; then
+        RUN_STEP=$OPTARG
+      else
+        echo -e "${ERROR}Invalid step specified: $OPTARG. Valid steps are: ${valid_steps[*]}.${NC}"
+        echo -e "$USAGE"
+        exit 1
+      fi
+      ;;
     v)
       VERBOSE=true;;
     h)
       echo -e "$USAGE"
       exit 0;;
     \?)
-      echo -e "$OPTARG is not a valid option."
+      echo -e "${ERROR}$OPTARG is not a valid option.${NC}"
       echo -e "$USAGE"
       exit 1;;
   esac
 done
+
+# ----------------------------------------
 
 if [ "$VERBOSE" = "true" ]; then
   set -x  # Enable debugging output
@@ -79,7 +109,6 @@ should_run() {
   return 1  # False, do not run
 }
 
-
 # ----------------------------------------
 
 UNIT=update_upgrade
@@ -106,7 +135,7 @@ if should_run; then
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER${NC}"
   echo -e "${SUCCESS}Attempting to add user $USER...${NC}"
   if id "$USER" &>/dev/null; then
-    echo -e "${ALERT}$USER already exists.${NC}"
+    echo -e "${INFO}$USER already exists.${NC}"
   else
     sudo useradd -m $USER && echo -e "${SUCCESS}$USER added successfully.${NC}" \
       || echo -e "${ERROR}Failed to add $USER${NC}"
@@ -116,12 +145,12 @@ fi
 
 STEP=setup_ssh
 if should_run; then
-ssh_as_ubuntu <<-STDIN || echo -e "${Error}Setting up $USER's ssh key${NC}"
-  echo -e "${SUCCESS}Begining the set up of SSH environment for $USER...${NC}"
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Setting up $USER's ssh key${NC}"
+  echo -e "${INFO}Begining the set up of SSH environment for $USER...${NC}"
 
   # create ~/.ssh
   if sudo [ -d "/home/$USER/.ssh" ]; then
-    echo -e "${ALERT}/home/$USER/.ssh already exists for $USER${NC}"
+    echo -e "${INFO}/home/$USER/.ssh already exists for $USER${NC}"
   else
     sudo -u $USER bash -c 'mkdir ~/.ssh' && echo -e "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
       || echo -e "${ERROR}Failed to mmkdir ~/.ssh for $USER${NC}"
@@ -129,7 +158,7 @@ ssh_as_ubuntu <<-STDIN || echo -e "${Error}Setting up $USER's ssh key${NC}"
 
   # create ~/.ssh/authorized_keys
   if sudo [ -f "/home/$USER/.ssh/authorized_keys" ]; then
-    echo -e "${ALERT}/home/$USER/.ssh/authorized_keys already exists for $USER${NC}"
+    echo -e "${INFO}/home/$USER/.ssh/authorized_keys already exists for $USER${NC}"
   else
     sudo -u $USER bash -c 'touch ~/.ssh/authorized_keys' && echo -e "${SUCCESS}created $USER's ~/.ssh/authorized_keys file successfully.${NC}" \
       || echo -e "${ERROR}Failed to create ~/.ssh/authorized_keys file for $USER${NC}"
@@ -152,14 +181,23 @@ fi
 STEP=add_user_to_sudo
 if should_run; then
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER to sudo group${NC}"
-# would be the 'wheel' group on Fedora/CentOS/RHEL, but is 'sudo' group in Debian.
-  sudo usermod -a -G sudo $USER && echo -e "${SUCCESS}added $USER to the 'sudo' group${NC}" \
-    || echo -e "${ERROR}failed to add $USER to sudo group${NC}"
+  # would be the 'wheel' group on Fedora/CentOS/RHEL, but is 'sudo' group in Debian.
+  if groups $USER | grep -qw sudo; then
+    echo -e "${INFO}$USER already a member of sudo group${NC}"
+  else
+    sudo usermod -a -G sudo $USER && echo -e "${SUCCESS}added $USER to the 'sudo' group${NC}" \
+      || echo -e "${ERROR}failed to add $USER to sudo group${NC}"
+  fi
 
-  echo -e "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
-    && echo -e "${SUCCESS}successfully added $USER to /etc/sudoers.d/{$USER}_user_permissions${NC}" \
-    || echo -e "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
+  if grep -Fxq "deploy ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/deploy_user_permissions; then
+    echo -e "${INFO}$USER already has 'no password' set for sudo group${NC}"
+  else
+    echo -e "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
+      && echo -e "${SUCCESS}successfully added $USER to /etc/sudoers.d/{$USER}_user_permissions${NC}" \
+      || echo -e "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
+  fi
 
+  echo -e "${INFO}setting $USER's shell to /bin/bash${NC}"
   bash -c "sudo chsh -s /bin/bash ${USER}" && echo -e "${SUCCESS}changed shell to bash for $USER${NC}" \
     || echo -e "${ERROR}failed to change shell to bash for $USER${NC}"
 STDIN
@@ -177,8 +215,19 @@ fi
 #  ----------------------------------------
 
 UNIT=install_nginx
+STEP=install_nginx
 if should_run; then
 ssh_as_user <<-STDIN
-  sudo apt install -y nginx && echo -e "${SUCCESS}successfully installed nginx${NC}" || echo -e "${ERROR}failed to install nginx${NC}"
+  if which nginx &>/dev/null; then
+    echo -e "${INFO}Nginx is already installed${NC}"
+    if service nginx status | grep -q "running"; then
+      echo -e "${SUCCESS}Nginx is running.${NC}"
+    else
+      echo -e "${WARNING}Nginx is \033[4mnot${NC} running.${NC}"
+    fi
+  else
+    sudo apt install -y nginx && echo -e "${SUCCESS}successfully installed nginx${NC}" \
+      || echo -e "${ERROR}failed to install nginx${NC}"
+  fi
 STDIN
 fi
