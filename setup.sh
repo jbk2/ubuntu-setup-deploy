@@ -6,7 +6,7 @@ source $DIR/settings.sh
 
 # ----------------------------------------
 
-INFO="\033[0;32m"  # Green
+INFO="\033[0;32m"     # Green
 SUCCESS="\033[1;32m"  # Green bold
 ALERT="\033[0;34m"    # Blue
 WARNING="\033[0;33m"  # Yellow
@@ -22,7 +22,7 @@ Usage:
   $0 -u UNIT -s STEP
 
 Options:
-  -u UNIT    run only a given unit ("update_upgrade", "create_user", "install_nginx")
+  -u UNIT    run only a given unit ("update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
   -s STEP    run only a given step ("update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
   -v         run in verbose mode
   -h         show this help message
@@ -133,7 +133,7 @@ UNIT=create_user
 STEP=add_user
 if should_run; then
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER${NC}"
-  echo -e "${SUCCESS}Attempting to add user $USER...${NC}"
+  echo -e "${SUCCESS}===> Attempting to add user $USER...${NC}"
   if id "$USER" &>/dev/null; then
     echo -e "${INFO}$USER already exists.${NC}"
   else
@@ -146,7 +146,7 @@ fi
 STEP=setup_ssh
 if should_run; then
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Setting up $USER's ssh key${NC}"
-  echo -e "${INFO}Begining the set up of SSH environment for $USER...${NC}"
+  echo -e "${INFO} ===> Begining the set up of SSH environment for $USER...${NC}"
 
   # create ~/.ssh
   if sudo [ -d "/home/$USER/.ssh" ]; then
@@ -197,7 +197,7 @@ ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER to sudo group${NC}"
       || echo -e "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
   fi
 
-  echo -e "${INFO}setting $USER's shell to /bin/bash${NC}"
+  echo -e "${INFO}===> Setting $USER's shell to /bin/bash${NC}"
   bash -c "sudo chsh -s /bin/bash ${USER}" && echo -e "${SUCCESS}changed shell to bash for $USER${NC}" \
     || echo -e "${ERROR}failed to change shell to bash for $USER${NC}"
 STDIN
