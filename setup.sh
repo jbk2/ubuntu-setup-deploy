@@ -3,6 +3,7 @@ set -euo pipefail
 
 DIR=`dirname "$(readlink -f "$0")"`
 source $DIR/settings.sh
+SCP_ARGS="-i $SSH_KEY"
 
 # ----------------------------------------
 
@@ -22,8 +23,8 @@ Usage:
   $0 -u UNIT -s STEP
 
 Options:
-  -u UNIT    run only a given unit ("update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
-  -s STEP    run only a given step ("update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
+  -u UNIT    run only a given unit ("create_systemd_services", "update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
+  -s STEP    run only a given step ("dns_auto_update", "update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
   -v         run in verbose mode
   -h         show this help message
 ##################################
@@ -37,8 +38,8 @@ VERBOSE=false
 
 # each UNIT or STEP value must be defined in the corresponding array
 # to enabling correct parsing of command line arguments:
-valid_units=("update_upgrade" "create_user" "install_nginx")
-valid_steps=("update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
+valid_units=("create_systemd_services" "update_upgrade" "create_user" "install_nginx")
+valid_steps=("dns_auto_update" "update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
 
 function contains_element {
   local e match="$1"
@@ -111,11 +112,61 @@ should_run() {
 
 # ----------------------------------------
 
+UNIT=create_systemd_services
+STEP=dns_auto_update
+if should_run; then
+echo -e "${INFO}Transferring dns-update.sh to server...${NC}"
+
+if scp $SCP_ARGS $DIR/dns-update.sh ubuntu@$SERVER:~/dns-update.sh
+then
+  echo -e "${SUCCESS}successfully scp'd dns-update.sh to ~/dns-update.sh on $SERVER${NC}"
+else
+  echo -e "${ERROR}failed to scp dns-update.sh to ~/dns-update.sh on $SERVER${NC}"
+  exit 1
+fi
+
+if ssh_as_ubuntu "sudo mv ~/dns-update.sh /usr/local/bin/dns-update.sh && sudo chmod +x /usr/local/bin/dns-update.sh"
+then
+  echo -e "${SUCCESS}successfully mv'd ~/dns-update.sh to /usr/local/bin/dns-update.sh on $SERVER & chmod'd +x.${NC}"
+else
+  echo -e "${ERROR}failed to mv ~/dns-update.sh to /usr/local/bin/dns-update.sh on $SERVER & chmod +x.${NC}"
+  exit 1
+fi
+
+ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Creating systemd unit file for dns-update.sh${NC}"
+  echo -e "${INFO}Creating systemd unit file for dns-update.sh...${NC}"
+
+  # Create the service unit file
+  cat <<EOF | sudo tee /etc/systemd/system/dns-update.service > /dev/null
+[Unit]
+Description=Update DNS with instance public IP
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/dns-update.sh
+StandardOutput=append:/var/log/dns-update.log
+StandardError=append:/var/log/dns-update.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  # Reload systemd and enable the service
+  sudo systemctl daemon-reload
+  sudo systemctl enable dns-update.service
+  sudo systemctl start dns-update.service
+  
+  echo -e "${SUCCESS}Systemd service created and started successfully.${NC}"
+STDIN
+fi
+
+# ----------------------------------------
 UNIT=update_upgrade
 STEP=update
 if should_run; then
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Updating packages${NC}"
-  sudo apt update && echo -e "${SUCCESS}successfully updated packages${NC}" || echo -e "${ERROR}failed to update packages${NC}"
+  sudo apt update -y && echo -e "${SUCCESS}successfully updated packages${NC}" || echo -e "${ERROR}failed to update packages${NC}"
 STDIN
 fi
 
@@ -127,7 +178,6 @@ STDIN
 fi
 
 # ----------------------------------------
-
 
 UNIT=create_user
 STEP=add_user
@@ -153,7 +203,7 @@ ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Setting up $USER's ssh key${NC}"
     echo -e "${INFO}/home/$USER/.ssh already exists for $USER${NC}"
   else
     sudo -u $USER bash -c 'mkdir ~/.ssh' && echo -e "${SUCCESS}made $USER's ~/.ssh successfully.${NC}" \
-      || echo -e "${ERROR}Failed to mmkdir ~/.ssh for $USER${NC}"
+      || echo -e "${ERROR}Failed to mkdir ~/.ssh for $USER${NC}"
   fi
 
   # create ~/.ssh/authorized_keys
@@ -189,10 +239,10 @@ ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER to sudo group${NC}"
       || echo -e "${ERROR}failed to add $USER to sudo group${NC}"
   fi
 
-  if grep -Fxq "deploy ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/deploy_user_permissions; then
+  if grep -Fxq "$USER ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/deploy_user_permissions; then
     echo -e "${INFO}$USER already has 'no password' set for sudo group${NC}"
   else
-    echo -e "deploy ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
+    echo -e "$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/deploy_user_permissions \
       && echo -e "${SUCCESS}successfully added $USER to /etc/sudoers.d/{$USER}_user_permissions${NC}" \
       || echo -e "${ERROR}failed to add $USER to /etc/sudoers.d/${USER}_user_permissions${NC}"
   fi
