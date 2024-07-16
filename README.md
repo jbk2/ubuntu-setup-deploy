@@ -1,17 +1,19 @@
 ### README.md
-This repository contains multiple script files, for deployment to an Ubuntu Linux distribution,
-which will:
+This repo contains script files, for deployment in a Debian Ubuntu Linux distribution
+that carry out the following:
 
 - on running the ./setup.sh executable script file:
-  - ssh in as 'ubuntu' into the remote server.
-  - create a user (recommend naming user as 'deploy') with sudo & no password-all privelidges.
-  - install Nginx.
+  - ssh's in as 'ubuntu' into the remote server.
+  - creates a user (recommend naming user as 'deploy') with sudo & no password-all privelidges.
+  - installs Nginx.
+  - creates a systemd unit file to run the update-dns.sh script on each restart.
 
 - on running the ./deploy.sh executable script file:
-  - copy the local ./index.html file to 'deploy' users' home
-  - move the ~/index.html file to /var/www/html
-  - change the ownership of the /var/www/html/index.html file to 'ubuntu'
-  - restart the nginx service
+  - copies the local ./index.html file to 'deploy' users' home
+  - moves the ~/index.html file to /var/www/html
+  - changes the ownership of the /var/www/html/index.html file to 'ubuntu'
+  - restarts the nginx service
+
 
 ### To run the scripts:
 1. clone the repository
@@ -26,6 +28,7 @@ which will:
     the same user that you setup in setup.sh).
   - you must have an index.html file in the same directory as the deploy.sh
     script file - this is the html file that you are deploying to the server.
+
 
 ### MANUAL SETUP REQUIRED:
 - To serve via https, you must manually configure the server to do so.
