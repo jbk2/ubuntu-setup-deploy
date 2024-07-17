@@ -27,12 +27,28 @@ fi
 if [ -e $DIR/index.html ]
 then
   echo -e "${SSH_KEY}"
-  if scp $SCP_ARGS $DIR/index.html $USER@$SERVER:~/index.html
+  # Get current date and time
+  CURRENT_DATE=$(date "+%Y-%m-%d %H:%M:%S")
+
+  # Create a temporary copy of the index.html file
+  TEMP_FILE=$(mktemp)
+  cp $DIR/index.html $TEMP_FILE
+
+  # Replace the placeholder in the temporary HTML file with the current date and time
+  sed -i '' "s/<!--#lastupdated#-->/$CURRENT_DATE/g" $TEMP_FILE
+
+  echo -e "${INFO}Updated date in temp index.html to $CURRENT_DATE${NC}"
+
+  # Perform the file transfer
+  if scp $SCP_ARGS $TEMP_FILE $USER@$SERVER:~/index.html
   then
     echo -e "${SUCCESS}successfully scp'd ~/index to server${NC}"
   else
     echo -e "${ERROR}failed to copy ~/index to server${NC}"
   fi
+
+  # Clean up the temporary file
+  rm $TEMP_FILE
 else
   echo -e "${ERROR}This script needs $DIR/index.html to exist, which it currently does not${NC}"
 fi
@@ -52,6 +68,14 @@ ssh_as_user <<-STDIN
     echo -e "${SUCCESS}successfully changed ownership of /var/www/html/index.html to ubuntu user${NC}"
   else
     echo -e "${ERROR}failed to change ownership of /var/www/html/index.html to ubuntu${NC}"
+  fi
+
+  # Set correct permissions
+  if sudo chmod 644 /var/www/html/index.html
+  then
+    echo -e "${SUCCESS}successfully set permissions on /var/www/html/index.html${NC}"
+  else
+    echo -e "${ERROR}failed to set permissions on /var/www/html/index.html${NC}"
   fi
 
   # Restart nginx to apply changes

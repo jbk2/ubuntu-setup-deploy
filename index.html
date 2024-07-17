@@ -1,59 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My First Nginx Page - v1.2</title>
-<!-- Include Google Roboto Font -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-<style>
-    body {
-        font-family: 'Roboto', sans-serif; /* Applying Roboto Font */
-        background-color: #f5f5f5; /* Light grey background */
-        color: #333333; /* Material text color */
-        padding: 20px;
-        margin: 0;
-    }
-
-    h1 {
-        font-weight: 300; /* Lighter font-weight, typical in Material Design */
-        color: #1a237e; /* Material Design indigo hue */
-        text-align: center;
-        padding-bottom: 20px;
-    }
-
-    p {
-        font-size: 18px;
-        margin-top: 0;
-        margin-bottom: 20px;
-    }
-
-    ol {
-        background: #ffffff; /* White background for contrast */
-        padding: 20px;
-        border-radius: 8px; /* Slight rounding of corners */
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
-        list-style-position: inside;
-    }
-
-    li {
-        margin: 10px 0;
-        font-size: 16px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu deployment scripts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333333;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            font-weight: 500;
+            color: #1a237e;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        h2, h3, h4 {
+            color: #2a3eb1;
+            padding: 10px 0;
+        }
+        p, li {
+            font-size: 16px;
+            color: #424242;
+        }
+        p {
+          margin: 0;
+        }
+        li {
+          /* margin-bottom: 5px; */
+        }
+        ol, ul {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            list-style-position: inside;
+            margin: 10px 0;
+        }
+        code {
+            background-color: #eeeeee;
+            border-radius: 4px;
+            padding: 2px 5px;
+            font-family: 'Courier New', monospace;
+            display: block;
+            margin: 5px 0;
+            display: inline-block;
+            /* white-space: pre-wrap; */
+        }
+    </style>
 </head>
 <body>
-<h1>My 1st Nginx Page - Created by Bash Scripting - v1.2</h1>
-<p>
-    This was created by a local workstation script file which:
-</p>
-<ol>
-    <li>SSH'd into the remote machine.</li>
-    <li>Set safety options in the bash environment.</li>
-    <li>Created deploy user and copied ssh key to their home.</li>
-    <li>Installed Nginx.</li>
-    <li>Securely copied an already built index.html file into the directory Nginx serves templates from, i.e., /var/www/html/...</li>
-    <li>Rebooted Nginx so that it would serve the index.html file.</li>
-</ol>
+    <h1>Ubuntu deployment scripts - README.md</h1>
+    <p><em>Last updated: <!--#lastupdated#--></em></p>
+    <h4>This repo contains script files for deployment on a Debian Ubuntu Linux distribution to carry out the following:</h4>
+    <ul>
+        <li>On running the ./setup.sh executable script file:
+            <ul>
+                <li>SSHs in as 'ubuntu' into the remote server.</li>
+                <li>Creates a user (recommend naming user as 'deploy') with sudo & no password-all privileges.</li>
+                <li>Installs Nginx.</li>
+                <li>Creates a systemd unit file to run the update-dns.sh script on each restart.</li>
+            </ul>
+        </li>
+        <li>On running the ./deploy.sh executable script file:
+            <ul>
+                <li>Copies the local ./index.html file to 'deploy' users' home.</li>
+                <li>Moves the ~/index.html file to /var/www/html.</li>
+                <li>Changes the ownership of the /var/www/html/index.html file to 'ubuntu'.</li>
+                <li>Restarts the nginx service.</li>
+            </ul>
+        </li>
+    </ul>
+    <h2>To run the scripts:</h2>
+    <ol>
+        <li>Clone the repository.</li>
+        <li>CD into the repository.</li>
+        <li>Update $SERVER in settings.sh with host's public IP address.</li>
+        <li>Run the help option on ./setup.sh, i.e., <code>&nbsp;&nbsp;./setup.sh -h</code>
+            <em>Run without arguments to run all units and steps; </em><code>&nbsp;&nbsp;USER=deploy ./setup.sh</code>
+            <em>When executing the script files you must define the USER variable, with the
+                username that you wish to create on the server and run deployment from,
+                otherwise USER will be set to your local machine's user name.</em>
+        </li>
+        <li>Then run the <code>&nbsp;&nbsp;USER=deploy ./deploy.sh</code> script file in terminal
+            <em>You must pass USER in with the execute deploy.sh command (set as
+                the same user that you set up in setup.sh).</em>
+            <em>- You must have an index.html file in the same directory as the deploy.sh
+                script file - this is the HTML file that you are deploying to the server.</em>
+        </li>
+    </ol>
+
+    <h2>MANUAL SETUP REQUIRED:</h2>
+    <h3>### HTTPS</h3>
+    <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
+    <ol>
+        <li>Get SSL cert & key from provider.</li>
+        <li>Create an /etc/nginx/ssl directory.</li>
+        <li>SCP cert & key into server:
+            <p>&nbsp;&nbsp;Cert; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu</code></p>
+            <p>&nbsp;&nbsp;Key; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu</code></p>
+        </li>
+        <li>Sudo move the cert & key into /etc/nginx/ssl directory:
+            <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt</code></p>
+            <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+        </li>
+        <li>Chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
+            <p>&nbsp;&nbsp;<code>sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+            <p>&nbsp;&nbsp;<code>sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+        </li>
+        <li>Update server context in /etc/nginx/sites-available/... with:
+            <li>ssl_certificate /path/to/cert</li>
+            <li>ssl_certificate_key /path/to/cert_key</li>
+            <li>root /path/to/your/html</li>
+            <li>Define your location route contexts</li>
+            <p>See example of a server context setup for SSL in this repo; 'nginx/sites-available/default'</p>
+        </li>
+    </ol>
+    <h3>DNS <em>(via Cloudflare)</em></h3>
+    <ul>
+        <li>To assign a domain name to the EC2 instance you must:
+            <ol>
+                <li>Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
+                    <br>- one named; 'www'
+                    <br>- one named; 'domain_name.tld'</li>
+                <li>Update the variable values in the ./dns-update.sh with:
+                    <br>- Cloudflare API token for domain (via https://dash.cloudflare.com/profile/api-tokens)
+                    <br>- Domain's Cloudflare zone - get value from Cloudflare API at below endpoint:
+                    <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+                    <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
+                    <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+                </li>
+                <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variable values are updated.</li>
+                <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will now be automatically updated via Cloudflare's API on each server restart.</li>
+            </ol>
+        </li>
+    </ul>
 </body>
 </html>
