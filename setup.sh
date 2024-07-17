@@ -255,6 +255,8 @@ ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Adding $USER to sudo group${NC}"
 STDIN
 fi
 
+# After setting up deply user you may want to lock the default user, ubuntu on Ubuntu, or
+# root on Fedora/CentOS/RHEL. Uncomment the following block to lock the default user.
 # STEP=lock_root_user
 # ssh_as_ubuntu <<-STDIN || echo -e "Locking $USER account"
 # passwd -l $USER # don't want to lock 'ubuntu' user, but if this were 'root' user, as it would be on RedHat, we would want to.

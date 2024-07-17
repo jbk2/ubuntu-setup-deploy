@@ -31,16 +31,16 @@ that carry out the following:
 
 
 ### MANUAL SETUP REQUIRED:
-- To serve via https, you must manually configure the server to do so.
+- To serve via https, you must manually configure the server to do so, by doing the following:
 	1. Get SSL cert & key from provider.
-	2. create /etx/nginx/ssl directory.
+	2. create an /etc/nginx/ssl directory.
   3. scp cert & key into server:
-      i.e. `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu`
-      i.e. `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu`
+    - cert; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu`
+    - key; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu`
   4. sudo move the cert & key into /etc/nginx/ssl directory:
       i.e. `sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt`
       i.e. `sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key`
-  5. change the key file permission and owner to nginx user:
+  5. chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
     - `sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key`
     - `sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key`
   6. Update server context in /etc/nginx/sites-available/... with:
@@ -48,3 +48,4 @@ that carry out the following:
     - ssl_certificate_key /path/to/cert_key
     - root /path/to/your/html
     - define your location route contexts
+    see example of a server context setup for ssl in this repo; 'nginx/sites-available/default
