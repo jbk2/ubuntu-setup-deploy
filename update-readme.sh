@@ -16,7 +16,7 @@ if [[ -e "$README_FILE" ]]; then
     TEMP_FILE=$(mktemp)
 
     # Replace the placeholder with the current date and time
-    sed "s/<!--#lastupdated#-->/$CURRENT_DATE/g" "$README_FILE" > "$TEMP_FILE"
+    sed "s/Last updated: \`.*\`/Last updated: \`$CURRENT_DATE\`/g" "$README_FILE" > "$TEMP_FILE"
 
     # Move the temporary file to the original file
     mv "$TEMP_FILE" "$README_FILE"
