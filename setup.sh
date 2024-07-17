@@ -23,8 +23,8 @@ Usage:
   $0 -u UNIT -s STEP
 
 Options:
-  -u UNIT    run only a given unit ("create_systemd_services", "update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
-  -s STEP    run only a given step ("dns_auto_update", "update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
+  -u UNIT    run only a given unit ("auto_update_dns", "update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
+  -s STEP    run only a given step ("upload_dns_script", "create_dns_update_service", "update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
   -v         run in verbose mode
   -h         show this help message
 ##################################
@@ -38,8 +38,8 @@ VERBOSE=false
 
 # each UNIT or STEP value must be defined in the corresponding array
 # to enabling correct parsing of command line arguments:
-valid_units=("create_systemd_services" "update_upgrade" "create_user" "install_nginx")
-valid_steps=("dns_auto_update" "update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
+valid_units=("auto_update_dns" "update_upgrade" "create_user" "install_nginx")
+valid_steps=("upload_dns_script" "create_dns_update_service" "update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
 
 function contains_element {
   local e match="$1"
@@ -112,8 +112,9 @@ should_run() {
 
 # ----------------------------------------
 
-UNIT=create_systemd_services
-STEP=dns_auto_update
+UNIT=auto_update_dns
+STEP=upload_dns_script
+
 if should_run; then
 echo -e "${INFO}Transferring dns-update.sh to server...${NC}"
 
@@ -133,6 +134,7 @@ else
   exit 1
 fi
 
+STEP=create_dns_update_service
 ssh_as_ubuntu <<-STDIN || echo -e "${ERROR}Creating systemd unit file for dns-update.sh${NC}"
   echo -e "${INFO}Creating systemd unit file for dns-update.sh...${NC}"
 
