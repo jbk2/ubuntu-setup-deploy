@@ -1,0 +1,6 @@
+{
+  "files.exclude": {
+      "**/.git": false, // This shows the .git directory
+      "**/.DS_Store": true, // Continues to hide .DS_Store files, etc.
+  }
+}

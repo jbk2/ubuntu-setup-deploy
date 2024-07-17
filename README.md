@@ -1,6 +1,9 @@
-### README.md
-This repo contains script files, for deployment in a Debian Ubuntu Linux distribution
-that carry out the following:
+## README.md
+### Last Updated
+Last updated: `2024-07-17 16:31:57`
+
+This repo contains script files, for deployment on a Debian Ubuntu Linux distribution
+to carry out the following:
 
 - on running the ./setup.sh executable script file:
   - ssh's in as 'ubuntu' into the remote server.
@@ -15,23 +18,24 @@ that carry out the following:
   - restarts the nginx service
 
 
-### To run the scripts:
+## To run the scripts:
 1. clone the repository
 2. cd into the repository
-3. run the help option on ./setup.sh, i.e. `./setup.sh -h`
+3. update $SERVER with host's public ip in settings.sh
+4. run the help option on ./setup.sh, i.e. `./setup.sh -h`
   - run without arguments to run all units and steps; `USER=deploy ./setup.sh`
   - when executing the script files you must define the USER variable, with the
     username that you wish to create on the server and run deployment from,
     otherwise USER will be set to your local machine's user name.
-4. then run the `USER=deploy ./deploy.sh` script file in terminal
+5. then run the `USER=deploy ./deploy.sh` script file in terminal
   - you must pass USER in with the execute deploy.sh command (set as
     the same user that you setup in setup.sh).
   - you must have an index.html file in the same directory as the deploy.sh
     script file - this is the html file that you are deploying to the server.
 
 
-### MANUAL SETUP REQUIRED:
-## HTTPS
+## MANUAL SETUP REQUIRED:
+### HTTPS
 - To serve via https, you must manually configure the server to do so, by doing the following:
 	1. Get SSL cert & key from provider.
 	2. create an /etc/nginx/ssl directory.
@@ -51,7 +55,7 @@ that carry out the following:
     - define your location route contexts
     see example of a server context setup for ssl in this repo; 'nginx/sites-available/default
 
-## DNS _(via cloudflare)_
+### DNS _(via cloudflare)_
 - To assign a domain name to the EC2 instance you must:
   1. Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
     - one named; 'www'
