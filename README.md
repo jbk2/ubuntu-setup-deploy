@@ -31,6 +31,7 @@ that carry out the following:
 
 
 ### MANUAL SETUP REQUIRED:
+## HTTPS
 - To serve via https, you must manually configure the server to do so, by doing the following:
 	1. Get SSL cert & key from provider.
 	2. create an /etc/nginx/ssl directory.
@@ -49,3 +50,17 @@ that carry out the following:
     - root /path/to/your/html
     - define your location route contexts
     see example of a server context setup for ssl in this repo; 'nginx/sites-available/default
+
+## DNS _(via cloudflare)_
+- To assign a domain name to the EC2 instance you must:
+  1. Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
+    - one named; 'www'
+    - one named; 'domain_name.tld'
+  2. Update the variable values in the ./dns-update.sh with:
+    - cloudflare api token for domain (via https://dash.cloudflare.com/profile/api-tokens)
+    - domain's cloudflare zone - get value from cloudflare api at below endpoint:
+    `curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
+    - the dns record(s) name and id - get value from cloudflare api at below endpoint:
+    `curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
+  3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variables values are updated.
+  4. ssh into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public ip, delete old 'known hosts') and run `systemctl status dns_update.service` to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If systemd service created successfully, then the DNS records will be now be automatically updated via cloudflare's API on each server restart.
