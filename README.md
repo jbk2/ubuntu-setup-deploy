@@ -1,5 +1,5 @@
 ## README.md
-_Last updated: `2024-07-17 16:57:29`_
+_Last updated: `2024-07-17 17:06:22`_
 
 This repo contains script files, for deployment on a Debian Ubuntu Linux distribution
 to carry out the following:
@@ -16,6 +16,9 @@ to carry out the following:
   - changes the ownership of the /var/www/html/index.html file to 'ubuntu'
   - restarts the nginx service
 
+- the index.html file is manually written based upon the copy from this README.md. To ensure content parity both files are programatically timestamped via:
+  - For index.html a script element in deploy.sh lines 30-51.
+  - For README.md via a .git/hooks/pre-commit which instantiates the ./update_readme.sh script.
 
 ## To run the scripts:
 1. clone the repository
