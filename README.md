@@ -1,5 +1,5 @@
 ## README.md
-_Last updated: `2024-07-18 16:34:57`_
+_Last updated: `2024-07-18 16:48:16`_
 
 This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
@@ -91,3 +91,6 @@ In `dns_update.sh`:
     `curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
   3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variables values are updated.
   4. ssh into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public ip, delete old 'known hosts') and run `systemctl status dns_update.service` to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If systemd service created successfully, then the DNS records will be now be automatically updated via cloudflare's API on each server restart.
+
+  ### Documentation
+  - Write a SERVER_INFO.md file with info about server instance info and save on server instance at /etc/docs/SERVER_INFO.md
