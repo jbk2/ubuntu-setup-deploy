@@ -1,7 +1,7 @@
 ## README.md
-_Last updated: `2024-07-17 17:06:22`_
+_Last updated: `2024-07-18 11:24:09`_
 
-This repo contains script files, for deployment on a Debian Ubuntu Linux distribution
+This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
 
 - on running the ./setup.sh executable script file:
@@ -36,7 +36,7 @@ to carry out the following:
     script file - this is the html file that you are deploying to the server.
 
 
-## MANUAL SETUP REQUIRED:
+## MANUAL CONFIGURATION REQUIRED:
 ### HTTPS
 - To serve via https, you must manually configure the server to do so, by doing the following:
 	1. Get SSL cert & key from provider.
