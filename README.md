@@ -1,5 +1,5 @@
 ## README.md
-_Last updated: `2024-07-18 11:24:09`_
+_Last updated: `2024-07-18 12:18:51`_
 
 This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
@@ -20,20 +20,41 @@ to carry out the following:
   - For index.html a script element in deploy.sh lines 30-51.
   - For README.md via a .git/hooks/pre-commit which instantiates the ./update_readme.sh script.
 
+
+## Variable Configuration
+The following variables configure the setup and deploy steps, edit with correct values:
+
+In `settings.sh`:
+| Variable | Description                              |
+|----------|------------------------------------------|
+| `SERVER` | Virtual machine public IP (default hardcoded) |
+| `SERVER_NAME` | Domain name (with correct DNS settings) (default hardcoded) |
+| `USER` | Name for the user that will replace *ubuntu* for administration (default 'deploy' is hardcoded) |
+| `SSH_KEY` | Path to the private SSH key (default hardcoded) |
+
+In `dns_update.sh`:
+| Variable | Description                              |
+|----------|------------------------------------------|
+| `CF_API_TOKEN` | CloudFlare API token with the assigned domain's DNS editing permissions |
+| `ZONE_ID` | The zone id of the assigned domain name |
+| `RECORD_ID` | The DNS record ID number that needs updating on restart |
+| `RECORD_NAME` | The DNS record name number that needs updating on restart |
+
+
 ## To run the scripts:
 1. clone the repository
 2. cd into the repository
-3. update $SERVER with host's public ip in settings.sh
-4. run the help option on ./setup.sh, i.e. `./setup.sh -h`
-  - run without arguments to run all units and steps; `USER=deploy ./setup.sh`
-  - when executing the script files you must define the USER variable, with the
-    username that you wish to create on the server and run deployment from,
-    otherwise USER will be set to your local machine's user name.
-5. then run the `USER=deploy ./deploy.sh` script file in terminal
-  - you must pass USER in with the execute deploy.sh command (set as
-    the same user that you setup in setup.sh).
-  - you must have an index.html file in the same directory as the deploy.sh
-    script file - this is the html file that you are deploying to the server.
+3. update variable values in settings.sh 
+4. Setup; run `./setup.sh -h` in terminal to view ./setup.sh's help options.
+  - run `USER=deploy ./setup.sh` in terminal (without arguments runs all units & steps)
+  - you must define USER variable in terminal commands with the username that you wish
+  to create on the server and run deployment from, otherwise USER will be set to your
+  local machine's user name!.
+5. Deploy index.html; run `USER=deploy ./deploy.sh` in terminal to execute the deploy script.
+  - again, you must define USER in the terminal execute command (set as the same user
+    that you setup in setup.sh).
+  - you must have an index.html file in the same directory as the deploy.sh script file, this is the html
+    file that the script will deploy to the server.
 
 
 ## MANUAL CONFIGURATION REQUIRED:

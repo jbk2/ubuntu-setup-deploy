@@ -23,7 +23,7 @@ Usage:
   $0 -u UNIT -s STEP
 
 Options:
-  -u UNIT    run only a given unit ("auto_update_dns", "update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
+  -u UNIT    run only a given unit ("dns_auto_update", "update_upgrade", "create_user", "install_nginx"). If no step is specified, all steps in the unit will run.
   -s STEP    run only a given step ("upload_dns_script", "create_dns_update_service", "update", "upgrade", "add_user", "setup_ssh", "add_user_to_sudo")
   -v         run in verbose mode
   -h         show this help message
@@ -38,7 +38,7 @@ VERBOSE=false
 
 # each UNIT or STEP value must be defined in the corresponding array
 # to enabling correct parsing of command line arguments:
-valid_units=("auto_update_dns" "update_upgrade" "create_user" "install_nginx")
+valid_units=("dns_auto_update" "update_upgrade" "create_user" "install_nginx")
 valid_steps=("upload_dns_script" "create_dns_update_service" "update" "upgrade" "add_user" "setup_ssh" "add_user_to_sudo" "install_nginx")
 
 function contains_element {
@@ -112,7 +112,7 @@ should_run() {
 
 # ----------------------------------------
 
-UNIT=auto_update_dns
+UNIT=dns_auto_update
 STEP=upload_dns_script
 
 if should_run; then

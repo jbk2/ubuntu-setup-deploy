@@ -1,12 +1,7 @@
 #!/bin/bash
 
-# Variables
-CF_API_TOKEN="M4EoSJUf8erouwLe0SV6mNhLdG1J0skfsHFw4I9F"
-ZONE_ID="8914d5652221e66de395d0d3b2a63210"
-RECORD_ID1="6dc3fdb2420bd2c36d2e44eb8c2e0999"  # Record ID for ctrlaltinsure.com
-RECORD_NAME1="ctrlaltinsure.com"
-RECORD_ID2="00cc89e395517ddd7b6ace5d65b89876"  # Record ID for www.ctrlaltinsure.com
-RECORD_NAME2="www.ctrlaltinsure.com"
+DIR=`dirname "$(readlink -f "$0")"`
+source $DIR/settings.sh
 
 log() {
   local MESSAGE="$1"

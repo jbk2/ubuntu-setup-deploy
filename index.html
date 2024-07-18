@@ -75,26 +75,84 @@
             </ul>
         </li>
     </ul>
+    <h2>Configuration:</h2>
+    <p>The following variables configure the setup and deploy steps, edit with correct values:</p>
+    <p>In <code>settings.sh</code>:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>SERVER</code></td>
+          <td>Virtual machine public IP (default hardcoded)</td>
+        </tr>
+        <tr>
+          <td><code>SERVER_NAME</code></td>
+          <td>Domain name (with correct DNS settings) (default hardcoded)</td>
+        </tr>
+        <tr>
+          <td><code>USER</code></td>
+          <td>Name for the user that will replace <em>ubuntu</em> for administration (default 'deploy' is hardcoded)</td>
+        </tr>
+        <tr>
+          <td><code>SSH_KEY</code></td>
+          <td>Path to the private SSH key (default hardcoded)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>In <code>dns_update.sh</code>:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>CF_API_TOKEN</code></td>
+          <td>CloudFlare API token with the assigned domain's DNS editing permissions</td>
+        </tr>
+        <tr>
+          <td><code>ZONE_ID</code></td>
+          <td>The zone id of the assigned domain name</td>
+        </tr>
+        <tr>
+          <td><code>RECORD_ID</code></td>
+          <td>The DNS record ID number that needs updating on restart</td>
+        </tr>
+        <tr>
+          <td><code>RECORD_NAME</code></td>
+          <td>The DNS record name number that needs updating on restart</td>
+        </tr>
+      </tbody>
+    </table>
     <h2>To run the scripts:</h2>
     <ol>
-        <li>Clone the repository.</li>
-        <li>CD into the repository.</li>
-        <li>Update $SERVER in settings.sh with host's public IP address.</li>
-        <li>Run the help option on ./setup.sh, i.e., <code>&nbsp;&nbsp;./setup.sh -h</code>
-            <em>Run without arguments to run all units and steps; </em><code>&nbsp;&nbsp;USER=deploy ./setup.sh</code>
-            <em>When executing the script files you must define the USER variable, with the
-                username that you wish to create on the server and run deployment from,
-                otherwise USER will be set to your local machine's user name.</em>
-        </li>
-        <li>Then run the <code>&nbsp;&nbsp;USER=deploy ./deploy.sh</code> script file in terminal
-            <em>You must pass USER in with the execute deploy.sh command (set as
-                the same user that you set up in setup.sh).</em>
-            <em>- You must have an index.html file in the same directory as the deploy.sh
-                script file - this is the HTML file that you are deploying to the server.</em>
-        </li>
+      <li>Clone the repository.</li>
+      <li>CD into the repository.</li>
+      <li>Update variable values in settings.sh.</li>
+      <h3>Setup:</h3>
+      <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal to view ./setup.sh's help options.</li> 
+      <li>run <code>deploy ./setup.sh</code> in terminal (without arguments runs all units & steps)
+        <em>you must define USER variable in terminal commands with the username that you wish
+          to create on the server and run deployment from, otherwise USER will be set to your
+          local machine's user name!.</em>
+      </li>
+      <h3>Deploy index.html;</h3>
+      <li>run <code>USER=deploy ./deploy.sh</code> in terminal to execute the deploy script.
+        <em>again, you must define USER in the terminal execute command (set as the same user
+          that you setup in setup.sh).</em>
+        <em>You must have an index.html file in the same directory as the deploy.sh script
+          file - this is the HTML file that you are deploying to the server.</em>
+      </li>
     </ol>
-
-    <h2>MANUAL CONFIGURATION REQUIRED:</h2>
+  
+    <h2>Manual setup required:</h2>
     <h3>### HTTPS</h3>
     <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
     <ol>
