@@ -1,80 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu deployment scripts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f5f5f5;
-            color: #333333;
-            padding: 20px;
-            margin: 0;
-        }
-        h1 {
-            font-weight: 500;
-            color: #1a237e;
-            text-align: center;
-            padding-bottom: 20px;
-        }
-        h2, h3, h4 {
-            color: #2a3eb1;
-            padding: 10px 0;
-        }
-        p, li {
-            font-size: 16px;
-            color: #424242;
-        }
-        p {
-          margin: 0;
-        }
-        li {
-          /* margin-bottom: 5px; */
-        }
-        ol, ul {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            list-style-position: inside;
-            margin: 10px 0;
-        }
-        code {
-            background-color: #eeeeee;
-            border-radius: 4px;
-            padding: 2px 5px;
-            font-family: 'Courier New', monospace;
-            display: block;
-            margin: 5px 0;
-            display: inline-block;
-            /* white-space: pre-wrap; */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ubuntu deployment scripts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+        color: #333333;
+        padding: 20px;
+        margin: 0;
+    }
+    h1 {
+        font-weight: 500;
+        color: #1a237e;
+        text-align: center;
+        padding-bottom: 20px;
+    }
+    h2, h3, h4 {
+        color: #2a3eb1;
+        padding: 10px 0;
+    }
+    p, li {
+        font-size: 16px;
+        color: #424242;
+    }
+    p {
+      margin: 0;
+    }
+    h3 {
+      margin: 0;
+    }
+    li {
+      /* margin-bottom: 5px; */
+    }
+    ol, ul {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        list-style-position: inside;
+        margin: 10px 0;
+    }
+    code {
+        background-color: #eeeeee;
+        border-radius: 4px;
+        padding: 2px 5px;
+        font-family: 'Courier New', monospace;
+        display: block;
+        margin: 5px 0;
+        display: inline-block;
+        /* white-space: pre-wrap; */
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: #ffffff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    table th, table td {
+        padding: 12px 15px;
+        border: 1px solid #dddddd;
+        text-align: left;
+    }
+    table th {
+        background-color: #2a3eb1;
+        color: #ffffff;
+    }
+    table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
-    <h1>This page is served by Nginx, via deployment script setup Ubuntu instance</h1>
-    <p><em>Last updated: <!--#lastupdated#--></em></p>
-    <h4><a href="https://github.com/jbk2/linux-scripting">This</a> repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution, to carry out the following:</h4>
-    <ul>
-        <li>On running the ./setup.sh executable script file:
-            <ul>
-                <li>SSHs in as 'ubuntu' into the remote server.</li>
-                <li>Creates a user (recommend naming user as 'deploy') with sudo & no password-all privileges.</li>
-                <li>Installs Nginx.</li>
-                <li>Creates a systemd unit file to run the update-dns.sh script on each restart.</li>
-            </ul>
-        </li>
-        <li>On running the ./deploy.sh executable script file:
-            <ul>
-                <li>Copies the local ./index.html file to 'deploy' users' home.</li>
-                <li>Moves the ~/index.html file to /var/www/html.</li>
-                <li>Changes the ownership of the /var/www/html/index.html file to 'ubuntu'.</li>
-                <li>Restarts the nginx service.</li>
-            </ul>
-        </li>
-    </ul>
+  <h1>This page is served by Nginx, via deployment script setup Ubuntu instance</h1>
+  <p><em>Last updated: <!--#lastupdated#--></em></p>
+  <h4><a href="https://github.com/jbk2/linux-scripting">This</a> repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution, to carry out the following:</h4>
+  <ul>
+    <li>On running the ./setup.sh executable script file:
+      <ul>
+        <li>SSHs in as 'ubuntu' into the remote server.</li>
+        <li>Creates a user (recommend naming user as 'deploy') with sudo & no password-all privileges.</li>
+        <li>Installs Nginx.</li>
+        <li>Creates a systemd unit file to run the update-dns.sh script on each restart.</li>
+      </ul>
+    </li>
+    <li>On running the ./deploy.sh executable script file:
+      <ul>
+        <li>Copies the local ./index.html file to 'deploy' users' home.</li>
+        <li>Moves the ~/index.html file to /var/www/html.</li>
+        <li>Changes the ownership of the /var/www/html/index.html file to 'ubuntu'.</li>
+        <li>Restarts the nginx service.</li>
+      </ul>
+    </li>
+  </ul>
     <h2>Configuration:</h2>
     <p>The following variables configure the setup and deploy steps, edit with correct values:</p>
     <p>In <code>settings.sh</code>:</p>
@@ -138,7 +162,7 @@
       <li>Update variable values in settings.sh.</li>
       <h3>Setup:</h3>
       <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal to view ./setup.sh's help options.</li> 
-      <li>run <code>deploy ./setup.sh</code> in terminal (without arguments runs all units & steps)
+      <li>run <code>deploy ./setup.sh</code> in terminal (without arguments runs all units & steps). 
         <em>you must define USER variable in terminal commands with the username that you wish
           to create on the server and run deployment from, otherwise USER will be set to your
           local machine's user name!.</em>
@@ -156,46 +180,46 @@
     <h3>### HTTPS</h3>
     <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
     <ol>
-        <li>Get SSL cert & key from provider.</li>
-        <li>Create an /etc/nginx/ssl directory.</li>
-        <li>SCP cert & key into server:
-            <p>&nbsp;&nbsp;Cert; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu</code></p>
-            <p>&nbsp;&nbsp;Key; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu</code></p>
-        </li>
-        <li>Sudo move the cert & key into /etc/nginx/ssl directory:
-            <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt</code></p>
-            <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-        </li>
-        <li>Chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
-            <p>&nbsp;&nbsp;<code>sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-            <p>&nbsp;&nbsp;<code>sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-        </li>
-        <li>Update server context in /etc/nginx/sites-available/... with:
-            <li>ssl_certificate /path/to/cert</li>
-            <li>ssl_certificate_key /path/to/cert_key</li>
-            <li>root /path/to/your/html</li>
-            <li>Define your location route contexts</li>
-            <p>See example of a server context setup for SSL in this repo; 'nginx/sites-available/default'</p>
-        </li>
+      <li>Get SSL cert & key from provider.</li>
+      <li>Create an /etc/nginx/ssl directory.</li>
+      <li>SCP cert & key into server:
+        <p>&nbsp;&nbsp;Cert; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu</code></p>
+        <p>&nbsp;&nbsp;Key; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu</code></p>
+      </li>
+      <li>Sudo move the cert & key into /etc/nginx/ssl directory:
+        <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt</code></p>
+        <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+      </li>
+      <li>Chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
+        <p>&nbsp;&nbsp;<code>sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+        <p>&nbsp;&nbsp;<code>sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+      </li>
+      <li>Update server context in /etc/nginx/sites-available/... with:
+        <li>ssl_certificate /path/to/cert</li>
+        <li>ssl_certificate_key /path/to/cert_key</li>
+        <li>root /path/to/your/html</li>
+        <li>Define your location route contexts</li>
+        <p>See example of a server context setup for SSL in this repo; 'nginx/sites-available/default'</p>
+      </li>
     </ol>
     <h3>DNS <em>(via Cloudflare)</em></h3>
     <ul>
-        <li>To assign a domain name to the EC2 instance you must:
-            <ol>
-                <li>Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
-                    <br>- one named; 'www'
-                    <br>- one named; 'domain_name.tld'</li>
-                <li>Update the variable values in the ./dns-update.sh with:
-                    <br>- Cloudflare API token for domain (via https://dash.cloudflare.com/profile/api-tokens)
-                    <br>- Domain's Cloudflare zone - get value from Cloudflare API at below endpoint:
-                    <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
-                    <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
-                    <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
-                </li>
-                <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variable values are updated.</li>
-                <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will now be automatically updated via Cloudflare's API on each server restart.</li>
-            </ol>
-        </li>
+      <li>To assign a domain name to the EC2 instance you must:
+        <ol>
+          <li>Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
+            <br>- one named; 'www'
+            <br>- one named; 'domain_name.tld'</li>
+          <li>Update the variable values in the ./dns-update.sh with:
+            <br>- Cloudflare API token for domain (via https://dash.cloudflare.com/profile/api-tokens)
+            <br>- Domain's Cloudflare zone - get value from Cloudflare API at below endpoint:
+            <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+            <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
+            <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+          </li>
+          <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variable values are updated.</li>
+          <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will now be automatically updated via Cloudflare's API on each server restart.</li>
+        </ol>
+      </li>
     </ul>
 </body>
 </html>
