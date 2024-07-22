@@ -1,5 +1,7 @@
 ## README.md
-_Last updated: `2024-07-18 16:48:16`_
+_Last updated: `2024-07-22 17:09:08`_
+
+**On server restart - manually update public ipv4 into local ~/.ssh/config** 
 
 This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
@@ -45,7 +47,7 @@ In `dns_update.sh`:
 1. clone the repository
 2. cd into the repository
 3. update variable values in settings.sh 
-4. Setup; run `./setup.sh -h` in terminal to view ./setup.sh's help options.
+4. Setup; run `./setup.sh -h` in terminal to view ./setup.sh's help options:
   - run `USER=deploy ./setup.sh` in terminal (without arguments runs all units & steps)
   - you must define USER variable in terminal commands with the username that you wish
   to create on the server and run deployment from, otherwise USER will be set to your
@@ -83,14 +85,14 @@ In `dns_update.sh`:
   1. Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
     - one named; 'www'
     - one named; 'domain_name.tld'
-  2. Update the variable values in the ./dns-update.sh with:
+  2. Update the DNS variable values in the ./settings.sh, with:
     - cloudflare api token for domain (via https://dash.cloudflare.com/profile/api-tokens)
     - domain's cloudflare zone - get value from cloudflare api at below endpoint:
     `curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
     - the dns record(s) name and id - get value from cloudflare api at below endpoint:
     `curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
-  3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variables values are updated.
-  4. ssh into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public ip, delete old 'known hosts') and run `systemctl status dns_update.service` to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If systemd service created successfully, then the DNS records will be now be automatically updated via cloudflare's API on each server restart.
+  3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the ./settings.sh variables values are updated.
+  4. ssh into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public ip, delete old 'known hosts') and run `systemctl status dns-update.service` to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If systemd service created successfully, then the DNS records will be now be automatically updated via cloudflare's API on each server restart.
 
   ### Documentation
-  - Write a SERVER_INFO.md file with info about server instance info and save on server instance at /etc/docs/SERVER_INFO.md
+  - SERVER_INFO.md file contains server instance info and is saved on server instance at /etc/docs/SERVER_INFO.md
