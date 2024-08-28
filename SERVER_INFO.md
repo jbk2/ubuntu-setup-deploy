@@ -25,8 +25,8 @@
 
 ## Configuration Changes
 - `/etc/nginx/nginx.conf` modified to include custom settings.
-- `nginx/sites-enabled/default` defines the default server block.
-- Nginx configured to redirect ports 80 to ssl port 443.
+- `/etc/nginx/sites-enabled/default` defines the default server block.
+- Nginx is configured to redirect ports 80 to ssl port 443.
 
 ## Maintenance Notes
 - System updates every ...? - not automated.

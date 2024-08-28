@@ -27,7 +27,7 @@ to carry out the following:
 
 
 ## Variable Configuration
-You must create a /.env file containing the correct values for the following variables:
+The below **sensitive** variables must be defined for these scripts to operate. Create a /.env file containing the correct values for the following:
 
 In `/.env`:
 | Variable | Description                              |
