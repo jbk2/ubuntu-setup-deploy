@@ -25,7 +25,7 @@ to carry out the following:
 
 
 ## Variable Configuration
-The below **sensitive** variables must be defined for these scripts to operate. Create a /.env file containing the correct values for the following:
+The below **sensitive** variables must be defined for these scripts to operate. Create a /.env file with the correct values for the following variables:
 
 In `/.env`:
 | Variable | Description                              |
@@ -39,15 +39,14 @@ In `/.env`:
 | `RECORD_ID` | The DNS record ID number that needs updating on restart |
 | `RECORD_NAME` | The DNS record name number that needs updating on restart |
 
-/settings.sh will then source this /.env file and export it's variable values to it's environment for the scripts to use. 
-/settings.sh also defines some non-sensitive variables vales that the scripts may use.
+/settings.sh will then source your /.env file and export it's variable values to it's runtime environment for the scripts to use. /settings.sh also defines some non-sensitive variables values that the scripts may use.
 
 
 ## To run the scripts:
 1. clone the repository
 2. cd into the repository
-3. update variable values in /.env
-4. Setup; run `./setup.sh -h` in terminal to view ./setup.sh's help options:
+3. Create a local /.env and populate with correct values for variables listed in the configuration table above.
+4. Setup; run `./setup.sh -h` in terminal and read ./setup.sh's help options:
   - run `USER=deploy ./setup.sh` in terminal (without arguments runs all units & steps)
   - you must define USER variable in terminal commands with the username that you wish
   to create on the server and run deployment from, otherwise USER will be set to your
@@ -55,8 +54,7 @@ In `/.env`:
 5. Deploy index.html; run `USER=deploy ./deploy.sh` in terminal to execute the deploy script.
   - again, you must define USER in the terminal execute command (set as the same user
     that you setup in setup.sh).
-  - you must have an index.html file in the same directory as the deploy.sh script file, this is the html
-    file that the script will deploy to the server.
+  - you must have an index.html file in the same directory as the deploy.sh script file - this is the HTML file that you are deploying to the server.
 
 
 ## MANUAL CONFIGURATION REQUIRED:
@@ -85,13 +83,13 @@ In `/.env`:
   1. Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
     - one named; 'www'
     - one named; 'domain_name.tld'
-  2. Update the DNS variable values in the ./settings.sh, with:
+  2. Update the DNS variable values in your .env with:
     - cloudflare api token for domain (via https://dash.cloudflare.com/profile/api-tokens)
     - domain's cloudflare zone - get value from cloudflare api at below endpoint:
     `curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
     - the dns record(s) name and id - get value from cloudflare api at below endpoint:
     `curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"`
-  3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the ./settings.sh variables values are updated.
+  3. Ensure that the setup.sh script unit named 'auto_update_dns' has run, after your .env cloudflare related variable values are updated.
   4. ssh into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public ip, delete old 'known hosts') and run `systemctl status dns-update.service` to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If systemd service created successfully, then the DNS records will be now be automatically updated via cloudflare's API on each server restart.
 
   ### Documentation

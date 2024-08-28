@@ -107,9 +107,9 @@
     </li>
   </ul>
   <br>
-  <h2>Configuration:</h2>
+  <h2>Variable configuration:</h2>
   <p>The below <em>sensitive</em> variables must be defined for these scripts to operate.
-    Create a /.env file containing the correct values for the following:</p>
+    Create a /.env file with the correct values for the following variables:</p>
   <p>In <code>/.env</code>:</p>
   <table>
     <thead>
@@ -154,16 +154,17 @@
     </tbody>
   </table>
     
-  <p>/settings.sh will then source this /.env file and export it's variable values to it's environment for the scripts to use.
-      /settings.sh also defines some non-sensitive variables vales that the scripts may use.</p>
+  <p>/settings.sh will then source your /.env file and export it's variable values to it's runtime environment
+    for the scripts to use. /settings.sh also defines some non-sensitive variables vales that the scripts may use.
+  </p>
   <br>
   <h2>To run the scripts:</h2>
   <ol>
     <li>Clone <a href="https://github.com/jbk2/linux-scripting">this</a> repository.</li>
     <li>CD into the repository.</li>
-    <li>Create a local /.env and populate with correct values for variables listed in the Configuration table above.</li>
+    <li>Create a local /.env and populate with correct values for variables listed in the configuration table above.</li>
     <h3>Setup:</h3>
-    <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal to view ./setup.sh's help options.</li> 
+    <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal and read ./setup.sh's help options.</li> 
     <li>run <code>USER=deploy ./setup.sh</code> in terminal (without arguments runs all units & steps). 
       <em>you must define USER variable in terminal commands with the username that you wish
         to create on the server and run deployment from, otherwise USER will be set to your
@@ -178,7 +179,7 @@
     </li>
   </ol>
   
-  <h2>Manual setup required:</h2>
+  <h2>Manual configuration required:</h2>
   <h3>HTTPS</h3>
   <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
   <ol>
@@ -218,7 +219,7 @@
           <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
           <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
         </li>
-        <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after your .env variable values are updated.</li>
+        <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after your .env cloudflare related variable values are updated.</li>
         <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run
           <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded
           and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will
