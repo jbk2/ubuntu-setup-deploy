@@ -78,9 +78,9 @@
   </style>
 </head>
 <body>
-  <h1>This page is served by Nginx, via deployment script setup Ubuntu instance</h1>
-  <p><em>Last updated: <!--#lastupdated#--></em></p>
-  <h4><a href="https://github.com/jbk2/linux-scripting">This</a> repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution, to carry out the following:</h4>
+  <h1>Nginx reverse proxied Ubuntu instance, provisioned by this deployment script</h1>
+  <p><em>Last updated: 2024-08-28 20:39:04</em></p>
+  <h4><a href="https://github.com/jbk2/linux-scripting">This repo</a> contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution, to carry out the following:</h4>
   <ul>
     <li>On running the ./setup.sh executable script file:
       <ul>
@@ -98,126 +98,137 @@
         <li>Restarts the nginx service.</li>
       </ul>
     </li>
+    <li>~/index.html is html markup of <a href="https://github.com/jbk2/ubuntu-setup-deploy/blob/main/README.md">this </a>README.md. To ensure content 
+      parity both files are programatically timestamped via:
+      <ul>
+        <li>For index.html a script element in deploy.sh lines 30-51.</li>
+        <li>For README.md via a .git/hooks/pre-commit which instantiates the ./update_readme.sh script.</li>
+      </ul>
+    </li>
   </ul>
-    <h2>Configuration:</h2>
-    <p>The below **sensitive** variables must be defined for these scripts to operate.
-      Create a /.env file containing the correct values for the following:</p>
-    <p>In <code>/.env</code>:</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Variable</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>SERVER</code></td>
-          <td>Virtual machine public IP</td>
-        </tr>
-        <tr>
-          <td><code>SERVER_NAME</code></td>
-          <td>Domain name (set with correct DNS settings defined)</td>
-        </tr>
-        <tr>
-          <td><code>USER</code></td>
-          <td>Name for the user that will replace <em>ubuntu</em> for administration</td>
-        </tr>
-        <tr>
-          <td><code>SSH_KEY</code></td>
-          <td>Path to the private SSH key</td>
-        </tr>
-        <tr>
-          <td><code>CF_API_TOKEN</code></td>
-          <td>CloudFlare API token with the assigned domain's DNS editing permissions</td>
-        </tr>
-        <tr>
-          <td><code>ZONE_ID</code></td>
-          <td>The zone id of the assigned domain name</td>
-        </tr>
-        <tr>
-          <td><code>RECORD_ID</code></td>
-          <td>The DNS record ID number that needs updating on restart</td>
-        </tr>
-        <tr>
-          <td><code>RECORD_NAME</code></td>
-          <td>The DNS record name number that needs updating on restart</td>
-        </tr>
-      </tbody>
-    </table>
+  <br>
+  <h2>Configuration:</h2>
+  <p>The below <em>sensitive</em> variables must be defined for these scripts to operate.
+    Create a /.env file containing the correct values for the following:</p>
+  <p>In <code>/.env</code>:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>SERVER</code></td>
+        <td>Virtual machine public IP</td>
+      </tr>
+      <tr>
+        <td><code>SERVER_NAME</code></td>
+        <td>Domain name (set with correct DNS settings defined)</td>
+      </tr>
+      <tr>
+        <td><code>USER</code></td>
+        <td>Name for the user that will replace <em>ubuntu</em> for administration</td>
+      </tr>
+      <tr>
+        <td><code>SSH_KEY</code></td>
+        <td>Path to the private SSH key</td>
+      </tr>
+      <tr>
+        <td><code>CF_API_TOKEN</code></td>
+        <td>CloudFlare API token with the assigned domain's DNS editing permissions</td>
+      </tr>
+      <tr>
+        <td><code>ZONE_ID</code></td>
+        <td>The zone id of the assigned domain name</td>
+      </tr>
+      <tr>
+        <td><code>RECORD_ID</code></td>
+        <td>The DNS record ID number that needs updating on restart</td>
+      </tr>
+      <tr>
+        <td><code>RECORD_NAME</code></td>
+        <td>The DNS record name number that needs updating on restart</td>
+      </tr>
+    </tbody>
+  </table>
     
-    <p>/settings.sh will then source this /.env file and export it's variable values to it's environment for the scripts to use.
-       /settings.sh also defines some non-sensitive variables vales that the scripts may use.</p>
-
-    <h2>To run the scripts:</h2>
-    <ol>
-      <li>Clone the repository.</li>
-      <li>CD into the repository.</li>
-      <li>Update variable values in /.env.</li>
-      <h3>Setup:</h3>
-      <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal to view ./setup.sh's help options.</li> 
-      <li>run <code>deploy ./setup.sh</code> in terminal (without arguments runs all units & steps). 
-        <em>you must define USER variable in terminal commands with the username that you wish
-          to create on the server and run deployment from, otherwise USER will be set to your
-          local machine's user name!.</em>
-      </li>
-      <h3>Deploy index.html;</h3>
-      <li>run <code>USER=deploy ./deploy.sh</code> in terminal to execute the deploy script.
-        <em>again, you must define USER in the terminal execute command (set as the same user
-          that you setup in setup.sh).</em>
-        <em>You must have an index.html file in the same directory as the deploy.sh script
-          file - this is the HTML file that you are deploying to the server.</em>
-      </li>
-    </ol>
+  <p>/settings.sh will then source this /.env file and export it's variable values to it's environment for the scripts to use.
+      /settings.sh also defines some non-sensitive variables vales that the scripts may use.</p>
+  <br>
+  <h2>To run the scripts:</h2>
+  <ol>
+    <li>Clone <a href="https://github.com/jbk2/linux-scripting">this</a> repository.</li>
+    <li>CD into the repository.</li>
+    <li>Create a local /.env and populate with correct values for variables listed in the Configuration table above.</li>
+    <h3>Setup:</h3>
+    <li>run <code>&nbsp;&nbsp;./setup.sh -h</code>` in terminal to view ./setup.sh's help options.</li> 
+    <li>run <code>USER=deploy ./setup.sh</code> in terminal (without arguments runs all units & steps). 
+      <em>you must define USER variable in terminal commands with the username that you wish
+        to create on the server and run deployment from, otherwise USER will be set to your
+        local machine's user name!.</em>
+    </li>
+    <h3>Deploy index.html;</h3>
+    <li>run <code>USER=deploy ./deploy.sh</code> in terminal to execute the deploy script.
+      <em>again, you must define USER in the terminal execute command (set as the same user
+        that you setup in setup.sh).</em>
+      <em>You must have an index.html file in the same directory as the deploy.sh script
+        file - this is the HTML file that you are deploying to the server.</em>
+    </li>
+  </ol>
   
-    <h2>Manual setup required:</h2>
-    <h3>### HTTPS</h3>
-    <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
-    <ol>
-      <li>Get SSL cert & key from provider.</li>
-      <li>Create an /etc/nginx/ssl directory.</li>
-      <li>SCP cert & key into server:
-        <p>&nbsp;&nbsp;Cert; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@12.34.567.890:/home/ubuntu</code></p>
-        <p>&nbsp;&nbsp;Key; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@12.34.567.890:/home/ubuntu</code></p>
-      </li>
-      <li>Sudo move the cert & key into /etc/nginx/ssl directory:
-        <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt</code></p>
-        <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-      </li>
-      <li>Chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
-        <p>&nbsp;&nbsp;<code>sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-        <p>&nbsp;&nbsp;<code>sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key</code></p>
-      </li>
-      <li>Update server context in /etc/nginx/sites-available/... with:
-        <li>ssl_certificate /path/to/cert</li>
-        <li>ssl_certificate_key /path/to/cert_key</li>
-        <li>root /path/to/your/html</li>
-        <li>Define your location route contexts</li>
-        <p>See example of a server context setup for SSL in this repo; 'nginx/sites-available/default'</p>
-      </li>
-    </ol>
-    <h3>DNS <em>(via Cloudflare)</em></h3>
-    <ul>
-      <li>To assign a domain name to the EC2 instance you must:
-        <ol>
-          <li>Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
-            <br>- one named; 'www'
-            <br>- one named; 'domain_name.tld'</li>
-          <li>Update the variable values in the ./dns-update.sh with:
-            <br>- Cloudflare API token for domain (via https://dash.cloudflare.com/profile/api-tokens)
-            <br>- Domain's Cloudflare zone - get value from Cloudflare API at below endpoint:
-            <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
-            <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
-            <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
-          </li>
-          <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after the dns-update.sh variable values are updated.</li>
-          <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will now be automatically updated via Cloudflare's API on each server restart.</li>
-        </ol>
-      </li>
-    </ul>
-    <h3>On instance documentation</h3>
-    <ul> 
-      <li>Write a SERVER_INFO.md file with info about server instance info and save on server instance at /etc/docs/SERVER_INFO.md.</li>
-    </ul>
+  <h2>Manual setup required:</h2>
+  <h3>HTTPS</h3>
+  <p>To serve via HTTPS, you must manually configure the server to do so, by doing the following:</p>
+  <ol>
+    <li>Get SSL cert & key from provider.</li>
+    <li>Create an /etc/nginx/ssl directory.</li>
+    <li>SCP cert & key into server:
+      <p>&nbsp;&nbsp;Cert; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@12.34.567.890:/home/ubuntu</code></p>
+      <p>&nbsp;&nbsp;Key; <code>scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@12.34.567.890:/home/ubuntu</code></p>
+    </li>
+    <li>Sudo move the cert & key into /etc/nginx/ssl directory:
+      <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt</code></p>
+      <p>&nbsp;&nbsp;i.e., <code>sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+    </li>
+    <li>Chmod & chown to nginx user, default user set in /etc/nginx/nginx.conf, usually 'www-data':
+      <p>&nbsp;&nbsp;<code>sudo chmod 600 /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+      <p>&nbsp;&nbsp;<code>sudo chown www-data:www-data /etc/nginx/ssl/ssl_certificate_key.key</code></p>
+    </li>
+    <li>Update server context in /etc/nginx/sites-available/... with:
+      <li>ssl_certificate /path/to/cert</li>
+      <li>ssl_certificate_key /path/to/cert_key</li>
+      <li>root /path/to/your/html</li>
+      <li>Define your location route contexts</li>
+      <p>See example of a server context setup for SSL in this repo; 'nginx/sites-available/default'</p>
+    </li>
+  </ol>
+  <h3>DNS <em>(via Cloudflare)</em></h3>
+  <ul>
+    <li>To assign a domain name to the EC2 instance you must:
+      <ol>
+        <li>Initially, manually create 2 DNS 'A records' pointing to the EC2 instance's public IP address:
+          <br>- one named; 'www'
+          <br>- one named; 'domain_name.tld'</li>
+        <li>Update the variable values in your .env with:
+          <br>- Cloudflare API token for domain (via https://dash.cloudflare.com/profile/api-tokens)
+          <br>- Domain's Cloudflare zone - get value from Cloudflare API at below endpoint:
+          <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+          <br>- The DNS record(s) name and ID - get value from Cloudflare API at below endpoint:
+          <code>&nbsp;&nbsp;curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records" -H "Authorization: Bearer YOUR_API_TOKEN" -H "Content-Type: application/json"</code>
+        </li>
+        <li>Ensure that the setup.sh script unit named 'auto_update_dns' has run, after your .env variable values are updated.</li>
+        <li>SSH into the server (update ~/.ssh/config for easy ssh login with the EC2 instance's public IP, delete old 'known hosts') and run
+          <code>&nbsp;&nbsp;systemctl status dns_update.service</code> to check that the systemd service has been created (it should be loaded
+          and enabled, but inactive because it only runs on restart). If the systemd service was created successfully, then the DNS records will
+          now be automatically updated via Cloudflare's API on each server restart.</li>
+      </ol>
+    </li>
+  </ul>
+  <h3>On instance documentation</h3>
+  <ul> 
+    <li>Write a SERVER_INFO.md file with info about server instance info and save on server instance at /etc/docs/SERVER_INFO.md.</li>
+  </ul>
 </body>
 </html>

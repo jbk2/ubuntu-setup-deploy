@@ -1,27 +1,25 @@
 ## README.md
-_Last updated: `2024-07-22 17:09:08`_
+_Last updated: `2024-08-28 20:39:04`_
 
-**On server restart - manually update public ipv4 into local ~/.ssh/config** 
+**On server restart - manually update the new public ipv4 into your local ~/.ssh/config for ease of ssh'ing into server** 
 
 This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
 
-- the script ssh's into the remote server instance to set it up, to do so it needs:
-  - your private ssh key path to be populated into 
-
 - on running the ./setup.sh executable script file:
-  - ssh's in as 'ubuntu' into the remote server.
+  - ssh's into, as 'ubuntu' user, the remote server.
   - creates a user (recommend naming user as 'deploy') with sudo & no password-all privelidges.
   - installs Nginx.
   - creates a systemd unit file to run the update-dns.sh script on each restart.
 
 - on running the ./deploy.sh executable script file:
-  - copies the local ./index.html file to 'deploy' users' home
-  - moves the ~/index.html file to /var/www/html
-  - changes the ownership of the /var/www/html/index.html file to 'ubuntu'
-  - restarts the nginx service
+  - copies the local ./index.html file to 'deploy' users' home directory.
+  - moves the ~/index.html file to /var/www/html.
+  - changes the ownership of the /var/www/html/index.html file to 'ubuntu'.
+  - restarts the nginx service.
 
-- the index.html file is manually written based upon the copy from this README.md. To ensure content parity both files are programatically timestamped via:
+- the index.html file is manually written based upon the copy from this README.md. To ensure content 
+  parity both files are programatically timestamped via:
   - For index.html a script element in deploy.sh lines 30-51.
   - For README.md via a .git/hooks/pre-commit which instantiates the ./update_readme.sh script.
 
