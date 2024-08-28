@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Directory where README.md is located
-REPO_DIR="/Users/jamesbkemp/Documents/Code/devops/ubuntu-setup-deploy"
+REPO_DIR="/Users/jamesbkemp/Documents/Code/devops/ubuntu-setup"
 
 # Fetch the current date and time
 CURRENT_DATE=$(date "+%Y-%m-%d %H:%M:%S")
