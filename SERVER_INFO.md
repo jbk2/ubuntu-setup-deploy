@@ -1,6 +1,7 @@
 # Server Documentation for SERVER_NAME
 
-- This file, /etc/docs/SERVER_INFO.md, is where info about this server instance will be stored.
+- This file's intention is as documentation for the server instance which these scrips create.
+  Update this file and save on the host server at /etc/docs/SERVER_INFO.md.
 
 ## General Information
 - **Purpose**: A demonstration of an Ubuntu instance setup with my 'ubuntu-setup-deploy' script, whose repo can be found [here](https://github.com/jbk2/ubuntu-setup-deploy)
