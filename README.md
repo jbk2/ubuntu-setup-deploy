@@ -6,6 +6,9 @@ _Last updated: `2024-07-22 17:09:08`_
 This repo contains scripts for auto set up of and deployment to a Linux Debian Ubuntu distribution,
 to carry out the following:
 
+- the script ssh's into the remote server instance to set it up, to do so it needs:
+  - your private ssh key path to be populated into 
+
 - on running the ./setup.sh executable script file:
   - ssh's in as 'ubuntu' into the remote server.
   - creates a user (recommend naming user as 'deploy') with sudo & no password-all privelidges.
@@ -24,34 +27,33 @@ to carry out the following:
 
 
 ## Variable Configuration
-The following variables configure the setup and deploy steps, edit with correct values:
+You must create a /.env file containing the correct values for the following variables:
 
-In `settings.sh`:
+In `/.env`:
 | Variable | Description                              |
 |----------|------------------------------------------|
-| `SERVER` | Virtual machine public IP (default hardcoded) |
-| `SERVER_NAME` | Domain name (with correct DNS settings) (default hardcoded) |
-| `USER` | Name for the user that will replace *ubuntu* for administration (default 'deploy' is hardcoded) |
-| `SSH_KEY` | Path to the private SSH key (default hardcoded) |
-
-In `dns_update.sh`:
-| Variable | Description                              |
-|----------|------------------------------------------|
+| `SERVER` | Virtual machine public IP |
+| `SERVER_NAME` | Domain name (with correct DNS settings defined) |
+| `USER` | Name for the user that will replace *ubuntu* for administration |
+| `SSH_KEY` | Path to the private SSH key |
 | `CF_API_TOKEN` | CloudFlare API token with the assigned domain's DNS editing permissions |
 | `ZONE_ID` | The zone id of the assigned domain name |
 | `RECORD_ID` | The DNS record ID number that needs updating on restart |
 | `RECORD_NAME` | The DNS record name number that needs updating on restart |
 
+/settings.sh will then source this /.env file and export it's variable values to it's environment for the scripts to use. 
+/settings.sh also defines some non-sensitive variables vales that the scripts may use.
+
 
 ## To run the scripts:
 1. clone the repository
 2. cd into the repository
-3. update variable values in settings.sh 
+3. update variable values in /.env
 4. Setup; run `./setup.sh -h` in terminal to view ./setup.sh's help options:
   - run `USER=deploy ./setup.sh` in terminal (without arguments runs all units & steps)
   - you must define USER variable in terminal commands with the username that you wish
   to create on the server and run deployment from, otherwise USER will be set to your
-  local machine's user name!.
+  local machine's user name!
 5. Deploy index.html; run `USER=deploy ./deploy.sh` in terminal to execute the deploy script.
   - again, you must define USER in the terminal execute command (set as the same user
     that you setup in setup.sh).
@@ -65,8 +67,8 @@ In `dns_update.sh`:
 	1. Get SSL cert & key from provider.
 	2. create an /etc/nginx/ssl directory.
   3. scp cert & key into server:
-    - cert; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@13.36.100.115:/home/ubuntu`
-    - key; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@13.36.100.115:/home/ubuntu`
+    - cert; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate.crt ubuntu@12.34.567.890:/home/ubuntu`
+    - key; `scp -i ~/path/to/your/ssh-keypair.pem ~/path/to/your/ssl_certificate_key.key ubuntu@12.34.567.890:/home/ubuntu`
   4. sudo move the cert & key into /etc/nginx/ssl directory:
       i.e. `sudo mv ~/ssl_certificate.crt /etc/nginx/ssl/ssl_certificate.crt`
       i.e. `sudo mv ~/ssl_certificate_key.key /etc/nginx/ssl/ssl_certificate_key.key`
