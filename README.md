@@ -1,5 +1,5 @@
 ## README.md
-_Last updated: `2024-08-28 20:39:04`_
+_Last updated: `2025-10-02 16:12:44`_
 
 **On server restart - manually update the new public ipv4 into your local ~/.ssh/config for ease of ssh'ing into server** 
 
