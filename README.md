@@ -8,7 +8,7 @@ to carry out the following:
 
 - on running the ./setup.sh executable script file:
   - ssh's into, as 'ubuntu' user, the remote server.
-  - creates a user (recommend naming user as 'deploy') with sudo & no password-all privelidges.
+  - creates a user (recommend naming user as 'deploy') with sudo & non password-all privelidges.
   - installs Nginx.
   - creates a systemd unit file to run the update-dns.sh script on each restart.
 
