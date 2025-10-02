@@ -5,14 +5,14 @@
 
 ## General Information
 - **Purpose**: A demonstration of an Ubuntu instance setup with my 'ubuntu-setup-deploy' script, whose repo can be found [here](https://github.com/jbk2/ubuntu-setup-deploy)
-- **Public ipv4**: 13.39.86.143 (changes on every EC2 instance restart)
+- **Public ipv4**: **.**.**.*** (changes on every EC2 instance restart)
 - **Domain Name**: currently DNS linked to www.ctrlaltinsure.com (via CloudFlare)
 - **OS**: Ubuntu 20.04.4 LTS
 - **EC2 Instance Type** t4g.nano
 - **Architecture**: ARM64
 - **Region**: eu-west-3 (Paris)
-- **Hostname**: ip-172-31-46-114.eu-west-3.compute.internal
-- **AWS ami id**: ami-035e217195261eb8e
+- **Hostname**: ip-***-**-**-***.eu-west-3.compute.internal
+- **AWS ami id**: ami-035e2171952******
 
 ## Installed Software
 - nginx 1.24.0
